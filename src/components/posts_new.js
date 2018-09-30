@@ -7,14 +7,19 @@ import { createPost } from '../actions';
 
 class PostsNew extends Component{
 	renderField(field){
+		const { meta:{touched, error} } = field;
+		const className = `form-group ${ touched && error? 'has-danger' : ''}`;
 		return(
-			<div className='form-group'>
+			<div className={ className }>
 				<label>{field.label}</label>
 				<input 
 					className='form-control'
 					type='text'
 					{...field.input}
 				/>
+				<div className='text-help'>
+					{touched? error : ''}
+				</div>
 			</div>
 		);
 
@@ -53,8 +58,22 @@ class PostsNew extends Component{
 		);
 	}
 }
+function validate(values){
+	const errors = {}
+	if(!values.title){
+		errors.title = 'Enter a Title';
+	}
+	if(!values.categories){
+		errors.categories = 'Enter some categories';
+	}
+	if(!values.content){
+		errors.content = 'Enter some content please';
+	}
+	return errors;
+}
 
 export default reduxForm({
+	validate,
 	form: 'PostsNewForm'
 })(
 	connect(null, { createPost })(PostsNew)
